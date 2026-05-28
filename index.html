@@ -340,7 +340,7 @@
     </div>
 
     <!-- CTA -->
-    <button onclick="window.history.back()"
+    <button onclick="goBackOrToSafety()"
       class="w-full py-3 sm:py-3.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold rounded-xl text-sm sm:text-base transition-colors cursor-pointer">
       🔒 Go Back to Safety
     </button>
@@ -403,6 +403,15 @@ function startVibration() {
         navigator.vibrate([1000, 200, 1000, 200, 2000]);
     } else {
         console.log("Vibration not supported on this device/browser.");
+    }
+}
+function goBackOrToSafety() {
+    if (window.history.length > 1) {
+        window.history.back();
+    } else {
+        // No previous page – go to a harmless site (Google or a blank page)
+        window.location.href = "https://www.google.com";
+        // Alternative: window.location.href = "about:blank";
     }
 }
 
@@ -476,7 +485,7 @@ function triggerScare() {
   term.classList.add('flex');
 
   // 4. Audio
-  setTimeout(startAudio, 7200);  // slight delay to ensure audio starts after screen switch
+  setTimeout(startAudio, 6300);  // slight delay to ensure audio starts after screen switch
   startVibration();
 
   // 5. Schedule all terminal lines
