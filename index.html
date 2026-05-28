@@ -174,19 +174,6 @@
   <div class="orb" style="top:-120px;left:-80px;"></div>
   <div class="orb" style="bottom:-140px;right:-100px;background:radial-gradient(circle,rgba(124,58,237,.16) 0%,transparent 70%);"></div>
 
-  <!-- ── CONSENT BANNER (MUST be seen before click) ─── -->
-  <div id="consent-banner"
-       class="consent-pulse relative z-20 w-full bg-yellow-500/15 border-b-2 border-yellow-400/50 px-4 py-3 md:py-3.5 flex items-start md:items-center gap-3">
-    <span class="text-2xl leading-none shrink-0">📢</span>
-    <div class="text-yellow-200 text-xs md:text-sm leading-snug">
-      <span class="font-bold text-yellow-300">EDUCATIONAL DEMO ONLY.</span>
-      This is a <em>harmless cybersecurity awareness simulation</em>.
-      Your device is 100% safe — no data is ever accessed or uploaded.
-      <span class="hidden sm:inline">By clicking the button below you agree to a brief moment of intentional suspense for awareness.</span>
-      <span class="block sm:hidden text-yellow-400/80 text-xs mt-0.5">Tap below to agree &amp; experience the demo.</span>
-    </div>
-  </div>
-
   <!-- ── Main content ─────────────────────────────────── -->
   <div class="relative z-10 flex-1 flex flex-col items-center justify-center px-5 text-center gap-4 md:gap-5">
 
@@ -375,65 +362,56 @@
 
 // ── Audio ──────────────────────────────────────────────────────────────────
 // Replace URL with your own hosted creepy static / glitch sound
-let sfx = null;
-function playAudio() {
-  try {
-    let sfx = new Audio('http://sndup.net/vbph9');
-    sfx.volume = 0.28;
-    sfx.loop = true;
-    sfx.play().catch(() => { /* Autoplay might be blocked, that's okay */ });
-  } catch(e) {}
-}
-// ---------- AUDIO WITH EXACT REPETITION CONTROL ----------
-function playAudioWithLoopLimit(audioUrl, targetLoops = 2) {
-    let playCount = 0;
-    let audio = null;
-    let endedHandler = null;
 
+let audio = null;
+
+// Start playing the audio (can be triggered on button click)
+function startAudio() {
     try {
-        audio = new Audio(audioUrl);
-        audio.volume = 0.28;
+        // Replace the URL with your actual Cloudinary audio link
+        audio = new Audio("https://res.cloudinary.com/your-cloud-name/video/upload/v1234567890/your-audio-file.mp3");
         
-        // Helper to play and increment count
-        const playTrack = () => {
-            playCount++;
-            audio.currentTime = 0;
-            audio.play().catch(e => console.warn('Playback error:', e));
-            // If we've reached the target loops, stop the loop
-            if (playCount >= targetLoops) {
-                if (endedHandler) audio.removeEventListener('ended', endedHandler);
-                audio.pause();
-                audio = null;
-            }
-        };
-
-        endedHandler = () => {
-            // Safety check to ensure we don't exceed the limit
-            if (playCount < targetLoops) {
-                playTrack();
-            } else {
-                // Target loops reached, ensure audio is cleaned up
-                if (audio) {
-                    audio.pause();
-                    audio = null;
-                }
-            }
-        };
+        // Set volume (0.0 to 1.0)
+        audio.volume = 0.3; 
         
-        audio.addEventListener('ended', endedHandler);
+        // Enable looping (optional - to repeat automatically)
+        // audio.loop = true; 
         
-        // Start playing the first time
-        playCount = 0;
-        playTrack();
-        
-    } catch (error) {
-        console.error('Audio setup failed:', error);
+        // Play the audio, handling any browser autoplay restrictions
+        audio.play()
+            .then(() => console.log("Audio started successfully"))
+            .catch(error => console.log("Playback prevented:", error));
+    } catch(e) {
+        console.error("Audio setup failed:", e);
     }
 }
+
+// Stop playing the audio
 function stopAudio() {
-  try {
-    if (sfx) { sfx.pause(); sfx.currentTime = 0; sfx = null; }
-  } catch(e) {}
+    if (audio) {
+        audio.pause();
+        audio.currentTime = 0;  // Reset to the beginning
+        audio = null;
+        console.log("Audio stopped");
+    }
+}
+
+// Start a specific vibration pattern (e.g., when error messages appear)
+function startVibration() {
+    if ("vibrate" in navigator) {
+        // Pattern: Vibrate 1s, pause 200ms, vibrate 1s, pause 200ms, vibrate 2s
+        navigator.vibrate([1000, 200, 1000, 200, 2000]);
+    } else {
+        console.log("Vibration not supported on this device/browser.");
+    }
+}
+
+// Stop all vibrations immediately
+function stopVibration() {
+    if ("vibrate" in navigator) {
+        // Passing 0, empty array, or all zeros cancels any ongoing vibration
+        navigator.vibrate(0);
+    }
 }
 
 // ── Vibration ──────────────────────────────────────────────────────────────
@@ -498,7 +476,8 @@ function triggerScare() {
   term.classList.add('flex');
 
   // 4. Audio
-  playAudio();
+  startAudio() ;
+  startVibration();
 
   // 5. Schedule all terminal lines
   LINES.forEach(([txt, col, ms]) => {
@@ -516,6 +495,7 @@ function triggerScare() {
   // 7. At 12s — dead screen
   setTimeout(() => {
     stopAudio();
+    stopVibration();
     noBuzz();
     document.body.classList.remove('glitch-active');
     term.classList.add('hidden');
