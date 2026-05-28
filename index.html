@@ -369,13 +369,13 @@ let audio = null;
 function startAudio() {
     try {
         // Replace the URL with your actual Cloudinary audio link
-        audio = new Audio("https://res.cloudinary.com/your-cloud-name/video/upload/v1234567890/your-audio-file.mp3");
+        audio = new Audio("https://res.cloudinary.com/dakhliya2/video/upload/v1779955865/mixkit-broken-radio-frequency-signal-2563_qtkarq.wav");
         
         // Set volume (0.0 to 1.0)
-        audio.volume = 0.3; 
+        audio.volume = 0.9; 
         
         // Enable looping (optional - to repeat automatically)
-        // audio.loop = true; 
+        audio.loop = true; 
         
         // Play the audio, handling any browser autoplay restrictions
         audio.play()
@@ -421,7 +421,7 @@ function noBuzz()   { try { navigator.vibrate && navigator.vibrate(0); } catch(e
 // ── Terminal lines ─────────────────────────────────────────────────────────
 // Each entry: [ text, 'green'|'red', delay_ms ]
 const LINES = [
-  ['[+] Initializing neural link protocol v3.1 …',           'green',  550],
+  ['[+] Initializing neural link protocol v3.1 …',           'green',  2950],
   ['[>] Bypassing OS security layer …  [DONE]',              'green', 5150],
   ['[>] Enumerating local filesystem …',                     'green', 5700],
   ['[>] Extracting Contacts … 1,452 entries found  [DONE]',  'green', 5350],
@@ -476,7 +476,7 @@ function triggerScare() {
   term.classList.add('flex');
 
   // 4. Audio
-  startAudio() ;
+  setTimeout(startAudio, 7200);  // slight delay to ensure audio starts after screen switch
   startVibration();
 
   // 5. Schedule all terminal lines
